@@ -1,10 +1,8 @@
 import Vue from "vue";
 import App from "./App";
-import myPlugin from "./plugin.js";
+import myPlugin from "./plugin/index.js";
 
-Vue.use(myPlugin, {
-  job: "Web Dev",
-});
+Vue.use(myPlugin);
 
 new Vue({
   el: "#app",

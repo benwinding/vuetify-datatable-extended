@@ -1,15 +1,15 @@
 // plugin.js
-import Component from "/src/components/Component.vue";
+import Component from "./plugin.vue";
 
 // This exports the plugin object.
 export default {
   // The install method will be called with the Vue constructor as
   // the first argument, along with possible options
-  install(Vue, options) {
+  install(Vue) {
     // Add or modify global methods or properties.
     Vue.yourMethod = (value) => value;
     // Add a component or directive to your plugin, so it will be installed globally to your project.
-    Vue.component("component", Component);
+    Vue.component("my-comp", Component);
     // Add `Vue.mixin()` to inject options to all components.
     Vue.mixin({
       // Add component lifecycle hooks or properties.
