@@ -1,14 +1,18 @@
 <template>
   <div id="app">
-    <v-data-table-extended
-      :headers="headers"
-      :items="desserts"
-      :sort-by="['calories', 'fat']"
-      :sort-desc="[false, true]"
-      multi-sort
-      class="elevation-1"
-    >
-    </v-data-table-extended>
+    <v-app>
+      <v-card class="pa-5">
+        <v-data-table-extended
+          :headers="headers"
+          :items="desserts"
+          :sort-by="['calories', 'fat']"
+          :sort-desc="[false, true]"
+          multi-sort
+          class="elevation-10"
+        >
+        </v-data-table-extended>
+      </v-card>
+    </v-app>
   </div>
 </template>
 
@@ -21,6 +25,7 @@ export default {
           text: "Dessert (100g serving)",
           align: "start",
           sortable: false,
+          select_filter: true,
           value: "name",
         },
         { text: "Calories", value: "calories" },
