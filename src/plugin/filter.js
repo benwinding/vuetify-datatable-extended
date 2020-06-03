@@ -6,9 +6,9 @@ class FiltersHandler {
     this.filterValues = {};
   }
 
-  updateFilterValue(filterName, filterValue) {
-    console.log('updated filter: ', filterName, ' value:', filterValue)
-    this.filterValues[filterName] = filterValue;
+  updateFilterValues(filterValues) {
+    console.log('updated filter: ', {filterValues})
+    this.filterValues = filterValues;
   }
 
   registerFilter(filterName, filterCallback) {
@@ -17,11 +17,10 @@ class FiltersHandler {
 
   runFilters(value, search, item) {
     const self = this;
-    console.log('running filters: ', {value, search, item})
 
     for (let [filterName, filterCallback] of Object.entries(this.filterCallbacks)) {
-      const filterValue = self.filterValues[filterName];
-      const isFiltered = filterCallback(filterValue, item)
+      const filterSearchValue = self.filterValues[filterName];
+      const isFiltered = filterCallback(value, filterSearchValue, item)
       if (!isFiltered) {
         return false;
       }

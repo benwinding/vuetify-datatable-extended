@@ -12,15 +12,22 @@
             v-model="searchValue"
           ></v-text-field>
         </v-col>
-        <v-col class="mb-n5">
-          <v-select label="Select Columns" multiple></v-select>
+        <v-col class="mb-n5" v-for="f of selectFilters" :key="f.name">
+          <v-select
+            :label="f.label"
+            multiple
+            chips
+            v-model="f.model"
+            :items="f.items"
+          ></v-select>
         </v-col>
       </v-row>
     </v-container>
-
     <v-data-table
       v-bind="$attrs"
-      :search="searchValue"
+      :items="items"
+      :headers="headers"
+      :search="searchValueJsonDebounced"
       :customFilter="customFilter"
     >
       <slot></slot>
@@ -30,39 +37,89 @@
 
 <script>
 import FiltersHandler from "./filter";
+import { debounce } from "./debounce";
 
 export default {
-  props: [],
+  props: ["items", "headers"],
   data() {
     return {
       searchValue: "",
+      searchValueJsonDebounced: "",
+      selectFilters: [],
       filterHandler: new FiltersHandler(),
     };
   },
-  watch: {
-    searchValue(newValue) {
-      this.filterHandler.updateFilterValue('name', newValue);
-    }
+  computed: {
+    searchValueJson() {
+      const searchObj = this.selectFilters.reduce((acc, curr) => {
+        acc[curr.name] = curr.model;
+        return acc;
+      }, {});
+      this.filterHandler.updateFilterValues(searchObj);
+      return JSON.stringify(searchObj);
+    },
   },
-  mounted() {
-    console.log({ $attrs: this.$attrs });
-    const headers = this.$attrs.headers;
-    headers
-      .filter((h) => h.select_filter)
-      .map((h) => {
-        const fieldName = h.value;
-        this.filterHandler.registerFilter(fieldName, (filterValue, item) => {
-          if (!filterValue) {
-            return item;
-          }
-          return item[fieldName].toLowerCase().includes(filterValue);
+  watch: {
+    searchValueJson: debounce(function (newVal) {
+      this.searchValueJsonDebounced = newVal;
+      console.log("debouncing");
+    }, 100),
+    headers: {
+      immediate: true,
+      handler(newVal) {
+        newVal
+          .filter((h) => h.select_filter)
+          .map((h) => {
+            const fieldName = h.value;
+            this.selectFilters.push({
+              name: fieldName,
+              model: [],
+              label: "Select " + h.text,
+              items: [],
+            });
+            this.filterHandler.registerFilter(
+              fieldName,
+              (itemValue, filterValueArr) => {
+                // if (filterName !== fieldName) {
+                //   return true;
+                // }
+                if (!Array.isArray(filterValueArr) || !filterValueArr.length) {
+                  return true;
+                }
+                const itemValueLower = (itemValue + "").toLowerCase();
+                const doesFilterMatch = filterValueArr.some((filterValue) => {
+                  return itemValueLower.includes(
+                    (filterValue + "").toLowerCase()
+                  );
+                });
+                console.log("filter all", {
+                  fieldName,
+                  filterValueArr,
+                  doesFilterMatch,
+                  itemValue,
+                });
+                return doesFilterMatch;
+              }
+            );
+          });
+      },
+    },
+    items: {
+      immediate: true,
+      handler(newVal) {
+        if (!Array.isArray(newVal)) {
+          return;
+        }
+        const filters = this.selectFilters;
+        newVal.map((item) => {
+          filters.map((f) => {
+            f.items.push(item[f.name]);
+          });
         });
-      });
+      },
+    },
   },
   methods: {
-    filterAuthor(val) {
-      this.filterHandler.updateFilterValue("name", val);
-    },
     customFilter(value, search, item) {
       return this.filterHandler.runFilters(value, search, item);
     },

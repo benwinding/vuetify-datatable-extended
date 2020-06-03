@@ -28,11 +28,11 @@ export default {
           select_filter: true,
           value: "name",
         },
-        { text: "Calories", value: "calories" },
+        { text: "Calories", value: "calories", select_filter: true },
         { text: "Fat (g)", value: "fat" },
         { text: "Carbs (g)", value: "carbs" },
         { text: "Protein (g)", value: "protein" },
-        { text: "Iron (%)", value: "iron" },
+        { text: "Iron (%)", value: "iron", select_filter: true },
       ],
       desserts: [
         {
