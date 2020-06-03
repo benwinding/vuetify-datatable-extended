@@ -1,10 +1,16 @@
 <template>
-  <h1>Plugin</h1>
+  <div>
+    <v-data-table
+      v-bind="$attrs"
+    >
+      <slot></slot>
+    </v-data-table>
+  </div>
 </template>
 
 <script>
 export default {
-
+  props: ['filter']
 }
 </script>
 
