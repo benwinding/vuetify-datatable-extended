@@ -80,9 +80,6 @@ export default {
             this.filterHandler.registerFilter(
               fieldName,
               (itemValue, filterValueArr) => {
-                // if (filterName !== fieldName) {
-                //   return true;
-                // }
                 if (!Array.isArray(filterValueArr) || !filterValueArr.length) {
                   return true;
                 }
@@ -91,12 +88,6 @@ export default {
                   return itemValueLower.includes(
                     (filterValue + "").toLowerCase()
                   );
-                });
-                console.log("filter all", {
-                  fieldName,
-                  filterValueArr,
-                  doesFilterMatch,
-                  itemValue,
                 });
                 return doesFilterMatch;
               }
