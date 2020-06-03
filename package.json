@@ -3,10 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "main": "src/plugin/index.js",
+  "homepage": "https://github.com/benwinding/vuetify-datatable-extended",
   "dependencies": {
+    "vue": "2.x",
+    "vuetify": "2.x"
+  },
+  "devDependencies": {
+    "gh-pages": "^3.0.0",
     "sass": "^1.26.7",
-    "sass-loader": "^8.0.2",
-    "vue": "^2.6.11",
-    "vuetify": "^2.2.31"
+    "sass-loader": "^8.0.2"
   }
 }
