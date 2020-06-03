@@ -1,0 +1,9 @@
+{
+  "name": "vuetify-datatable-extended",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/plugin/index.js",
+  "dependencies": {
+    "vue": "^2.6.11"
+  }
+}
