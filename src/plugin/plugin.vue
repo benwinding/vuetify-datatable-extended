@@ -14,9 +14,20 @@
         <v-flex xs1>
           <v-menu :close-on-content-click="false" :nudge-width="200" left>
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" icon v-on="on">
-                <v-icon dark>mdi-filter</v-icon>
-              </v-btn>
+              <v-badge
+                :value="filtersEnabledCount > 0"
+                color="accent"
+                :content="filtersEnabledCount"
+                overlap
+              >
+                <v-btn
+                  :color="filtersEnabledCount > 0 ? 'primary' : null"
+                  icon
+                  v-on="on"
+                >
+                  <v-icon dark>mdi-filter</v-icon>
+                </v-btn>
+              </v-badge>
             </template>
 
             <v-card class="filtri">
@@ -25,9 +36,9 @@
 
               <v-card-text>
                 <!-- Categorie -->
-                <v-list-item-content>
-                  <v-list-item-title>Select Filters</v-list-item-title>
-                  <v-list-item-action v-for="f of selectFilters" :key="f.name">
+                <v-list-item-title>Select Filters</v-list-item-title>
+                <v-list-item-content v-for="f of selectFilters" :key="f.name">
+                  <v-list-item-action class="pa-0 ma-0">
                     <v-select
                       :label="f.label"
                       multiple
@@ -91,7 +102,14 @@ export default {
       filterHandler: new FiltersHandler(),
     };
   },
-  computed: {},
+  computed: {
+    filtersEnabledCount() {
+      const enabled = this.selectFilters.filter(
+        (f) => Array.isArray(f.model) && f.model.length
+      );
+      return enabled.length;
+    },
+  },
   watch: {
     searchValue: debounce(function (newVal) {
       this.searchValueDebounced = newVal;
@@ -112,6 +130,7 @@ export default {
             });
             this.filterHandler.registerFilter(fieldName);
           });
+        this.clearFilters();
       },
     },
     items: {
