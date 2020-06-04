@@ -10,6 +10,9 @@
           multi-sort
           class="elevation-10"
         >
+          <template v-slot:item.calories="{ item }">
+            <v-chip>{{ item.calories }}</v-chip>
+          </template>
         </v-data-table-extended>
       </v-card>
     </v-app>

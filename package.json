@@ -5,6 +5,7 @@
   "main": "src/plugin/index.js",
   "homepage": "https://github.com/benwinding/vuetify-datatable-extended",
   "scripts": {
+    "start": "vue serve ./src/main.js",
     "build-demo": "vue build ./src/main.js",
     "deploy-demo": "gh-pages -d dist"
   },
