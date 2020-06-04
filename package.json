@@ -6,7 +6,7 @@
   "homepage": "https://github.com/benwinding/vuetify-datatable-extended",
   "scripts": {
     "start": "tsc && vue serve ./src/main.js",
-    "build-demo": "vue build ./src/main.js",
+    "build-demo": "tsc && vue build ./src/main.js",
     "deploy-demo": "gh-pages -d dist"
   },
   "dependencies": {
