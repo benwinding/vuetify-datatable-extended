@@ -12,7 +12,11 @@
         </v-flex>
         <!-- Filtri -->
         <v-flex xs1>
-          <v-menu :close-on-content-click="false" :nudge-width="200" left>
+          <v-menu
+            :close-on-content-click="false"
+            :nudge-width="300"
+            v-model="showFilterMenu"
+          >
             <template v-slot:activator="{ on }">
               <v-badge
                 :value="filtersEnabledCount > 0"
@@ -100,6 +104,7 @@ export default {
       selectFilters: [],
       itemsFiltered: [],
       filterHandler: new FiltersHandler(),
+      showFilterMenu: false,
     };
   },
   computed: {
@@ -150,10 +155,12 @@ export default {
   },
   methods: {
     clearFilters() {
+      this.showFilterMenu = false;
       this.itemsFiltered = this.items;
       this.selectFilters.map((f) => (f.model = null));
     },
     saveFilters() {
+      this.showFilterMenu = false;
       this.selectFilters.map((f) => {
         this.filterHandler.updateFilterValue(f.name, f.model);
       });
