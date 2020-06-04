@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import FiltersHandler from "./filter";
+import FiltersHandler from "../helpers/filter";
 import { debounce } from "./debounce";
 
 export default {
@@ -110,22 +110,7 @@ export default {
               label: "Select " + h.text,
               items: [],
             });
-            this.filterHandler.registerFilter(
-              fieldName,
-              (filterValueArr, itemValue) => {
-                console.log('running Filter', {filterValueArr, itemValue});
-                if (!Array.isArray(filterValueArr) || !filterValueArr.length) {
-                  return true;
-                }
-                const itemValueLower = (itemValue + "").toLowerCase();
-                const doesFilterMatch = filterValueArr.some((filterValue) => {
-                  return itemValueLower.includes(
-                    (filterValue + "").toLowerCase()
-                  );
-                });
-                return doesFilterMatch;
-              }
-            );
+            this.filterHandler.registerFilter(fieldName);
           });
       },
     },
@@ -145,13 +130,14 @@ export default {
     },
   },
   methods: {
-    clearFilters() {},
+    clearFilters() {
+      this.itemsFiltered = this.items;
+      this.selectFilters.map((f) => (f.model = null));
+    },
     saveFilters() {
-      const searchObj = this.selectFilters.reduce((acc, curr) => {
-        acc[curr.name] = curr.model;
-        return acc;
-      }, {});
-      this.filterHandler.updateFilterValues(searchObj);
+      this.selectFilters.map((f) => {
+        this.filterHandler.updateFilterValue(f.name, f.model);
+      });
       this.runFilters();
     },
     runFilters() {

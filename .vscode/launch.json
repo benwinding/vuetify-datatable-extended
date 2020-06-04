@@ -14,6 +14,7 @@
         "--detectOpenHandles",
         "${relativeFile}"
       ],
+      "sourceMaps": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
     }
