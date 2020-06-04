@@ -16,6 +16,8 @@
             :close-on-content-click="false"
             :nudge-width="300"
             v-model="showFilterMenu"
+            offset-x
+            transition="scale-transition"
           >
             <template v-slot:activator="{ on }">
               <v-badge
@@ -34,8 +36,15 @@
               </v-badge>
             </template>
 
-            <v-card class="filtri">
-              <v-card-title class="subheading">Filter</v-card-title>
+            <v-card>
+              <v-card-title>
+                Filter
+                <v-spacer></v-spacer>
+                <v-btn dark @click="clearFilters()">
+                  <v-icon left>mdi-close</v-icon>
+                  Clear Filters
+                </v-btn>
+              </v-card-title>
               <v-divider></v-divider>
 
               <v-card-text>
@@ -49,23 +58,11 @@
                       chips
                       v-model="f.model"
                       :items="f.items"
+                      @change="onChangedSelect()"
                     ></v-select>
                   </v-list-item-action>
                 </v-list-item-content>
               </v-card-text>
-
-              <v-card-actions>
-                <v-spacer></v-spacer>
-
-                <v-btn color="accent" @click="clearFilters()">
-                  <v-icon left>mdi-close</v-icon>
-                  Clear Filters</v-btn
-                >
-                <v-btn color="primary" @click="saveFilters()">
-                  <v-icon left>mdi-content-save</v-icon>
-                  Set Filters
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-menu>
         </v-flex>
@@ -159,15 +156,16 @@ export default {
       this.itemsFiltered = this.items;
       this.selectFilters.map((f) => (f.model = null));
     },
-    saveFilters() {
-      this.showFilterMenu = false;
+    onChangedSelect(){
+      this._setFiltersToHandler();
+      this._filterItems();
+    },
+    _setFiltersToHandler() {
       this.selectFilters.map((f) => {
-        // console.log('updateFilterValue', {...f})
         this.filterHandler.updateFilterValue(f.name, f.model);
       });
-      this.runFilters();
     },
-    runFilters() {
+    _filterItems() {
       this.itemsFiltered = this.items.filter((item) =>
         this.filterHandler.runFilter(item)
       );
