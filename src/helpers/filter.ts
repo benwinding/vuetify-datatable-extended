@@ -35,16 +35,18 @@ class FilterArraysHandler {
     if (_.isEmpty(this.filters) || !_.isObject(this.filters)) {
       return true;
     }
-    if (Object.values(this.filters).every((f) => _.isNil(f.value))) {
+    if (
+      Object.values(this.filters).every(
+        (f) => _.isNil(f.value) || (Array.isArray(f.value) && !f.value.length)
+      )
+    ) {
       return true;
     }
     const filterEntries = Object.entries(this.filters);
-    const results = filterEntries.map(
-      ([filterFieldName, filterObject]) => {
-        const doesItMatch = doesItemMatch(item, filterFieldName, filterObject);
-        return doesItMatch;
-      }
-    );
+    const results = filterEntries.map(([filterFieldName, filterObject]) => {
+      const doesItMatch = doesItemMatch(item, filterFieldName, filterObject);
+      return doesItMatch;
+    });
     const doesMatch = results.reduce((acc, match) => acc || match, false);
     return doesMatch;
   }

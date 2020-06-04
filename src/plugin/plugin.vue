@@ -162,6 +162,7 @@ export default {
     saveFilters() {
       this.showFilterMenu = false;
       this.selectFilters.map((f) => {
+        // console.log('updateFilterValue', {...f})
         this.filterHandler.updateFilterValue(f.name, f.model);
       });
       this.runFilters();
