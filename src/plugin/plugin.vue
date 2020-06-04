@@ -91,6 +91,7 @@
 <script>
 import FiltersHandler from "../helpers/filter";
 import { debounce } from "./debounce";
+import * as _ from "lodash";
 
 export default {
   props: ["items", "headers"],
@@ -147,6 +148,9 @@ export default {
             f.items.push(item[f.name]);
           });
         });
+        filters.map((f) => {
+          f.items = _.sortedUniq(_.sortBy(f.items));
+        });
       },
     },
   },
@@ -156,7 +160,7 @@ export default {
       this.itemsFiltered = this.items;
       this.selectFilters.map((f) => (f.model = null));
     },
-    onChangedSelect(){
+    onChangedSelect() {
       this._setFiltersToHandler();
       this._filterItems();
     },
