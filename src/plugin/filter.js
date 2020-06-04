@@ -1,33 +1,54 @@
 // Credit: https://github.com/frontid/vuetify-data-table-multi-filter
 
-class FiltersHandler {
+class FilterArraysHandler {
   constructor() {
     this.filterCallbacks = {};
-    this.filterValues = {};
+    this.filterValuesArray = {};
+    this.filterMatchAll = {};
   }
 
-  updateFilterValues(filterValues) {
-    console.log('updated filter: ', {filterValues})
-    this.filterValues = filterValues;
+  updateFilterValue(filterFieldName, filterValue, matchAll) {
+    this.filterValuesArray[filterFieldName] = filterValue;
+    this.filterMatchAll[filterFieldName] = matchAll;
   }
 
-  registerFilter(filterName, filterCallback) {
-    this.filterCallbacks[filterName] = filterCallback;
+  registerFilter(filterFieldName, filterCallback) {
+    this.filterCallbacks[filterFieldName] = filterCallback;
   }
 
-  runFilters(value, search, item) {
+  runFilter(item) {
     const self = this;
-
-    for (let [filterName, filterCallback] of Object.entries(this.filterCallbacks)) {
-      const filterSearchValue = self.filterValues[filterName];
-      const isFiltered = filterCallback(value, filterSearchValue, item)
-      if (!isFiltered) {
-        return false;
-      }
+    if (!Object.values(self.filterValuesArray).length) {
+      return true;
     }
-    return true;
+    const applyFilter = (filterFieldName, filterCallback) => {
+      const filterFieldValue = self.filterValuesArray[filterFieldName];
+      const hasNoValue =
+        !filterFieldValue ||
+        (Array.isArray(filterFieldValue) && !filterFieldValue.length);
+      if (hasNoValue) {
+        return true;
+      }
+      const isFiltered = filterCallback(
+        filterFieldName,
+        filterFieldValue,
+        item
+      );
+      return isFiltered;
+    };
+    const filterEntries = Object.entries(this.filterCallbacks);
+    const result = filterEntries.reduce(
+      (acc, [filterFieldName, filterCallback]) => {
+        const filterResult = applyFilter(filterFieldName, filterCallback);
+        if (self.filterMatchAll[filterFieldName]) {
+          return acc && filterResult;
+        }
+        return acc || filterResult;
+      },
+      false
+    );
+    return result;
   }
-
 }
 
-export default FiltersHandler;
+export default FilterArraysHandler;

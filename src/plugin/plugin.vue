@@ -1,35 +1,67 @@
 <template>
   <div>
     <v-container fluid>
-      <v-row dense>
-        <v-col class="mb-n5">
+      <!-- SEARCH BAR -->
+      <v-layout justify-center align-center>
+        <v-flex xs6>
           <v-text-field
-            append-icon="mdi-magnify"
-            label="Search"
-            debounce
-            single-line
-            hide-details
+            label="Search Table"
             v-model="searchValue"
+            append-icon="mdi-magnify"
           ></v-text-field>
-        </v-col>
-        <v-col class="mb-n5" v-for="f of selectFilters" :key="f.name">
-          <v-select
-            :label="f.label"
-            multiple
-            chips
-            v-model="f.model"
-            :items="f.items"
-          ></v-select>
-        </v-col>
-      </v-row>
+        </v-flex>
+        <!-- Filtri -->
+        <v-flex xs1>
+          <v-menu :close-on-content-click="false" :nudge-width="200" left>
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" icon v-on="on">
+                <v-icon dark>mdi-filter</v-icon>
+              </v-btn>
+            </template>
+
+            <v-card class="filtri">
+              <v-card-title class="subheading">Filter</v-card-title>
+              <v-divider></v-divider>
+
+              <v-card-text>
+                <!-- Categorie -->
+                <v-list-item-content>
+                  <v-list-item-title>Select Filters</v-list-item-title>
+                  <v-list-item-action v-for="f of selectFilters" :key="f.name">
+                    <v-select
+                      :label="f.label"
+                      multiple
+                      chips
+                      v-model="f.model"
+                      :items="f.items"
+                    ></v-select>
+                  </v-list-item-action>
+                </v-list-item-content>
+              </v-card-text>
+
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn color="accent" @click="clearFilters()">
+                  <v-icon left>mdi-close</v-icon>
+                  Clear Filters</v-btn
+                >
+                <v-btn color="primary" @click="saveFilters()">
+                  <v-icon left>mdi-content-save</v-icon>
+                  Set Filters
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+        </v-flex>
+      </v-layout>
     </v-container>
     <v-data-table
       v-bind="$attrs"
       v-on="$listeners"
-      :items="items"
+      :items="itemsFiltered"
       :headers="headers"
-      :search="searchValueJsonDebounced"
-      :customFilter="customFilter"
+      :search="searchValueDebounced"
     >
       <!-- Pass on all named slots -->
       <slot v-for="slot in Object.keys($slots)" :name="slot" :slot="slot" />
@@ -53,26 +85,18 @@ export default {
   data() {
     return {
       searchValue: "",
-      searchValueJsonDebounced: "",
+      searchValueDebounced: "",
       selectFilters: [],
+      itemsFiltered: [],
       filterHandler: new FiltersHandler(),
     };
   },
-  computed: {
-    searchValueJson() {
-      const searchObj = this.selectFilters.reduce((acc, curr) => {
-        acc[curr.name] = curr.model;
-        return acc;
-      }, {});
-      this.filterHandler.updateFilterValues(searchObj);
-      return JSON.stringify(searchObj);
-    },
-  },
+  computed: {},
   watch: {
-    searchValueJson: debounce(function (newVal) {
-      this.searchValueJsonDebounced = newVal;
+    searchValue: debounce(function (newVal) {
+      this.searchValueDebounced = newVal;
       console.log("debouncing");
-    }, 100),
+    }, 300),
     headers: {
       immediate: true,
       handler(newVal) {
@@ -88,7 +112,8 @@ export default {
             });
             this.filterHandler.registerFilter(
               fieldName,
-              (itemValue, filterValueArr) => {
+              (filterValueArr, itemValue) => {
+                console.log('running Filter', {filterValueArr, itemValue});
                 if (!Array.isArray(filterValueArr) || !filterValueArr.length) {
                   return true;
                 }
@@ -120,8 +145,19 @@ export default {
     },
   },
   methods: {
-    customFilter(value, search, item) {
-      return this.filterHandler.runFilters(value, search, item);
+    clearFilters() {},
+    saveFilters() {
+      const searchObj = this.selectFilters.reduce((acc, curr) => {
+        acc[curr.name] = curr.model;
+        return acc;
+      }, {});
+      this.filterHandler.updateFilterValues(searchObj);
+      this.runFilters();
+    },
+    runFilters() {
+      this.itemsFiltered = this.items.filter((item) =>
+        this.filterHandler.runFilter(item)
+      );
     },
   },
 };
