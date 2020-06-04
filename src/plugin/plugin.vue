@@ -91,7 +91,7 @@
               <v-card-title>
                 Choose Columns
                 <v-spacer></v-spacer>
-                <v-btn dark @click="clearFilters()">
+                <v-btn dark @click="resetColumns()">
                   <v-icon left>mdi-close</v-icon>
                   Reset
                 </v-btn>
@@ -167,9 +167,9 @@ export default {
       return Object.values(this.headersAllMap);
     },
     headersChoosenObjs: function () {
-      return this.headersChoosen.map((h) => {
-        return this.headersAllMap[h];
-      });
+      return this.headersChoosen
+        .map((h) => this.headersAllMap[h])
+        .filter((h) => !!h);
     },
   },
   watch: {
@@ -178,7 +178,6 @@ export default {
     },
     searchValue: debounce(function (newVal) {
       this.searchValueDebounced = newVal;
-      console.log("debouncing");
     }, 300),
     headers: {
       immediate: true,
@@ -205,7 +204,7 @@ export default {
           this.headersAllMap[h.value] = h;
         });
         this.clearFilters();
-        this.headersChoosen = newVal;
+        this.headersChoosen = newVal.filter((h) => !h.hide).map((h) => h.value);
       },
     },
     items: {
@@ -248,6 +247,9 @@ export default {
     onChangedSelect() {
       this._setFiltersToHandler();
       this._filterItems();
+    },
+    resetColumns() {
+      this.headersChoosen = this.headers.map((h) => h.value);
     },
     _setFiltersToHandler() {
       this.selectFilters.map((f) => {

@@ -46,6 +46,7 @@ export default {
           carbs: 24,
           protein: 4.0,
           iron: "1%",
+          otherColumn: 4.0,
         },
         {
           name: "Ice cream sandwich",
