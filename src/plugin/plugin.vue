@@ -2,16 +2,13 @@
   <div>
     <v-container fluid>
       <!-- SEARCH BAR -->
-      <v-layout justify-center align-center>
-        <v-flex xs6>
+      <div class="d-flex flex-row justify-space-between align-center">
+        <div class="d-flex flex-row align-center">
           <v-text-field
             label="Search Table"
             v-model="searchValue"
             append-icon="mdi-magnify"
           ></v-text-field>
-        </v-flex>
-        <!-- Filtri -->
-        <v-flex xs1>
           <v-menu
             :close-on-content-click="false"
             :nudge-width="300"
@@ -65,14 +62,66 @@
               </v-card-text>
             </v-card>
           </v-menu>
-        </v-flex>
-      </v-layout>
+        </div>
+
+        <div>
+          <v-menu
+            :close-on-content-click="false"
+            offset-x
+            transition="scale-transition"
+          >
+            <template v-slot:activator="{ on }">
+              <v-badge
+                :value="filtersEnabledCount > 0"
+                color="accent"
+                :content="filtersEnabledCount"
+                overlap
+              >
+                <v-btn
+                  :color="filtersEnabledCount > 0 ? 'primary' : null"
+                  icon
+                  v-on="on"
+                >
+                  <v-icon dark>mdi-view-column</v-icon>
+                </v-btn>
+              </v-badge>
+            </template>
+
+            <v-card>
+              <v-card-title>
+                Choose Columns
+                <v-spacer></v-spacer>
+                <v-btn dark @click="clearFilters()">
+                  <v-icon left>mdi-close</v-icon>
+                  Reset
+                </v-btn>
+              </v-card-title>
+              <v-divider></v-divider>
+
+              <v-card-text>
+                <!-- Categorie -->
+                <v-list-item-content>
+                  <v-list-item-action class="pa-0 ma-0">
+                    <v-select
+                      label="Select Columns"
+                      multiple
+                      chips
+                      v-model="headersChoosen"
+                      :items="headerChoices"
+                    ></v-select>
+                  </v-list-item-action>
+                </v-list-item-content>
+              </v-card-text>
+            </v-card>
+          </v-menu>
+        </div>
+      </div>
     </v-container>
     <v-data-table
       v-bind="$attrs"
       v-on="$listeners"
       :items="itemsFiltered"
-      :headers="headers"
+      :headers="headersChoosenObjs"
       :search="searchValueDebounced"
     >
       <!-- Pass on all named slots -->
@@ -103,6 +152,8 @@ export default {
       itemsFiltered: [],
       filterHandler: new FiltersHandler(),
       showFilterMenu: false,
+      headersAllMap: {},
+      headersChoosen: [],
     };
   },
   computed: {
@@ -112,8 +163,19 @@ export default {
       );
       return enabled.length;
     },
+    headerChoices: function () {
+      return Object.values(this.headersAllMap);
+    },
+    headersChoosenObjs: function () {
+      return this.headersChoosen.map((h) => {
+        return this.headersAllMap[h];
+      });
+    },
   },
   watch: {
+    headersChoosen: function (newVal) {
+      console.log("headersChoosen", { newVal });
+    },
     searchValue: debounce(function (newVal) {
       this.searchValueDebounced = newVal;
       console.log("debouncing");
@@ -121,6 +183,9 @@ export default {
     headers: {
       immediate: true,
       handler(newVal) {
+        if (!Array.isArray(newVal)) {
+          return;
+        }
         newVal
           .filter((h) => h.select_filter)
           .map((h) => {
@@ -133,7 +198,14 @@ export default {
             });
             this.filterHandler.registerFilter(fieldName);
           });
+        newVal.map((h) => {
+          if (this.headersAllMap[h.value]) {
+            return;
+          }
+          this.headersAllMap[h.value] = h;
+        });
         this.clearFilters();
+        this.headersChoosen = newVal;
       },
     },
     items: {
@@ -150,6 +222,19 @@ export default {
         });
         filters.map((f) => {
           f.items = _.sortedUniq(_.sortBy(f.items));
+        });
+        const firstRow = newVal[0];
+        if (!firstRow) {
+          return;
+        }
+        Object.keys(firstRow).map((itemFieldName) => {
+          if (this.headersAllMap[itemFieldName]) {
+            return;
+          }
+          this.headersAllMap[itemFieldName] = {
+            value: itemFieldName,
+            text: itemFieldName.toUpperCase(),
+          };
         });
       },
     },
