@@ -17,7 +17,7 @@
             transition="scale-transition"
           >
             <template v-slot:activator="{ on: onMenu }">
-              <v-tooltip bottom :disabled="!selectFilters.length">
+              <v-tooltip bottom :disabled="hasFilters">
                 <template v-slot:activator="{ on: onTooltip }">
                   <v-badge
                     :value="filtersEnabledCount > 0"
@@ -28,7 +28,7 @@
                     <div v-on="onTooltip">
                       <v-btn
                         :color="filtersEnabledCount > 0 ? 'primary' : null"
-                        :disabled="!selectFilters.length"
+                        :disabled="!hasFilters"
                         icon
                         v-on="onMenu"
                       >
@@ -176,6 +176,9 @@ export default {
         (f) => Array.isArray(f.model) && f.model.length
       );
       return enabled.length;
+    },
+    hasFilters() {
+      return !!this.selectFilters.length;
     },
     headerChoices: function () {
       return Object.values(this.headersAllMap);
