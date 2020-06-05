@@ -1,6 +1,9 @@
 <template>
   <div id="app">
-    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css"
+      rel="stylesheet"
+    />
     <v-app>
       <v-card class="pa-5">
         <v-data-table-extended
@@ -38,7 +41,17 @@ export default {
         { text: "Protein (g)", value: "protein" },
         { text: "Iron (%)", value: "iron", select_filter: true },
       ],
-      desserts: [
+      desserts: null,
+    };
+  },
+  mounted() {
+    setTimeout(()=> {
+      this.setDeserts()
+    }, 1000)
+  },
+  methods: {
+    setDeserts() {
+      this.desserts = [
         {
           name: "Frozen Yogurt",
           calories: 200,
@@ -120,8 +133,8 @@ export default {
           protein: 7,
           iron: "6%",
         },
-      ],
-    };
+      ];
+    },
   },
 };
 </script>

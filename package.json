@@ -1,27 +1,42 @@
 {
   "name": "vuetify-datatable-extended",
   "version": "0.0.0",
-  "private": true,
+  "license": "MIT",
+  "author": "hello@benwinding.com",
   "main": "src/plugin/index.js",
   "homepage": "https://github.com/benwinding/vuetify-datatable-extended",
+  "files": [
+    "src/plugin",
+    "src/helpers/*.js",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "start": "tsc && vue serve ./src/main.js",
+    "build-lib": "tsc",
     "build-demo": "tsc && vue build ./src/main.js",
     "deploy-demo": "gh-pages -d dist"
   },
-  "dependencies": {
-    "lodash": "^4.17.15",
+  "peerDependencies": {
     "vue": "2.x",
     "vuetify": "2.x"
+  },
+  "dependencies": {
+    "lodash": "^4.x",
+    "rxjs": "^6.x"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.1",
     "@types/lodash": "^4.14.155",
     "@vue/cli": "^4.4.1",
+    "commander": "^5.1.0",
     "gh-pages": "^3.0.0",
     "jest": "^26.0.1",
     "sass": "^1.26.7",
     "sass-loader": "^8.0.2",
-    "typescript": "^3.9.3"
+    "shelljs": "^0.8.4",
+    "typescript": "^3.9.3",
+    "vue": "2.x",
+    "vuetify": "2.x"
   }
 }

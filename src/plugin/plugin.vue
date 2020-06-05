@@ -16,21 +16,29 @@
             offset-x
             transition="scale-transition"
           >
-            <template v-slot:activator="{ on }">
-              <v-badge
-                :value="filtersEnabledCount > 0"
-                color="accent"
-                :content="filtersEnabledCount"
-                overlap
-              >
-                <v-btn
-                  :color="filtersEnabledCount > 0 ? 'primary' : null"
-                  icon
-                  v-on="on"
-                >
-                  <v-icon dark>mdi-filter</v-icon>
-                </v-btn>
-              </v-badge>
+            <template v-slot:activator="{ on: onMenu }">
+              <v-tooltip bottom :disabled="!selectFilters.length">
+                <template v-slot:activator="{ on: onTooltip }">
+                  <v-badge
+                    :value="filtersEnabledCount > 0"
+                    color="accent"
+                    :content="filtersEnabledCount"
+                    overlap
+                  >
+                    <div v-on="onTooltip">
+                      <v-btn
+                        :color="filtersEnabledCount > 0 ? 'primary' : null"
+                        :disabled="!selectFilters.length"
+                        icon
+                        v-on="onMenu"
+                      >
+                        <v-icon dark>mdi-filter</v-icon>
+                      </v-btn>
+                    </div>
+                  </v-badge>
+                </template>
+                <span>Filters disabled</span>
+              </v-tooltip>
             </template>
 
             <v-card>
@@ -120,8 +128,8 @@
     <v-data-table
       v-bind="$attrs"
       v-on="$listeners"
-      :items="itemsFiltered"
-      :headers="headersChoosenObjs"
+      :items="itemsFiltered || []"
+      :headers="headersChoosenObjs || []"
       :search="searchValueDebounced"
     >
       <!-- Pass on all named slots -->
@@ -140,6 +148,8 @@
 <script>
 import FiltersHandler from "../helpers/filter";
 import { debounce } from "./debounce";
+import { Subject, BehaviorSubject, combineLatest } from "rxjs";
+import { takeUntil, filter } from "rxjs/operators";
 import * as _ from "lodash";
 
 export default {
@@ -154,6 +164,9 @@ export default {
       showFilterMenu: false,
       headersAllMap: {},
       headersChoosen: [],
+      o$items: new BehaviorSubject(),
+      o$headers: new BehaviorSubject(),
+      o$destroyed: new Subject(),
     };
   },
   computed: {
@@ -172,69 +185,36 @@ export default {
         .filter((h) => !!h);
     },
   },
+  mounted() {
+    combineLatest([this.o$items, this.o$headers])
+      .pipe(
+        filter(
+          ([items, headers]) => Array.isArray(items) && Array.isArray(headers)
+        )
+      )
+      .pipe(takeUntil(this.o$destroyed))
+      .subscribe(([items, headers]) => {
+        this._processHeaders(headers);
+        this._processItems(items);
+      });
+  },
+  destroyed() {
+    this.o$destroyed.next();
+  },
   watch: {
-    headersChoosen: function (newVal) {
-      console.log("headersChoosen", { newVal });
-    },
     searchValue: debounce(function (newVal) {
       this.searchValueDebounced = newVal;
     }, 300),
     headers: {
       immediate: true,
       handler(newVal) {
-        if (!Array.isArray(newVal)) {
-          return;
-        }
-        newVal
-          .filter((h) => h.select_filter)
-          .map((h) => {
-            const fieldName = h.value;
-            this.selectFilters.push({
-              name: fieldName,
-              model: [],
-              label: "Select " + h.text,
-              items: [],
-            });
-            this.filterHandler.registerFilter(fieldName);
-          });
-        newVal.map((h) => {
-          if (this.headersAllMap[h.value]) {
-            return;
-          }
-          this.headersAllMap[h.value] = h;
-        });
-        this.clearFilters();
-        this.headersChoosen = newVal.filter((h) => !h.hide).map((h) => h.value);
+        this.o$headers.next(newVal);
       },
     },
     items: {
       immediate: true,
       handler(newVal) {
-        if (!Array.isArray(newVal)) {
-          return;
-        }
-        const filters = this.selectFilters;
-        newVal.map((item) => {
-          filters.map((f) => {
-            f.items.push(item[f.name]);
-          });
-        });
-        filters.map((f) => {
-          f.items = _.sortedUniq(_.sortBy(f.items));
-        });
-        const firstRow = newVal[0];
-        if (!firstRow) {
-          return;
-        }
-        Object.keys(firstRow).map((itemFieldName) => {
-          if (this.headersAllMap[itemFieldName]) {
-            return;
-          }
-          this.headersAllMap[itemFieldName] = {
-            value: itemFieldName,
-            text: itemFieldName.toUpperCase(),
-          };
-        });
+        this.o$items.next(newVal);
       },
     },
   },
@@ -260,6 +240,54 @@ export default {
       this.itemsFiltered = this.items.filter((item) =>
         this.filterHandler.runFilter(item)
       );
+    },
+    _processHeaders(newHeaders) {
+      newHeaders
+        .filter((h) => h.select_filter)
+        .map((h) => {
+          const fieldName = h.value;
+          this.selectFilters.push({
+            name: fieldName,
+            model: [],
+            label: "Select " + h.text,
+            items: [],
+          });
+          this.filterHandler.registerFilter(fieldName);
+        });
+      newHeaders.map((h) => {
+        if (this.headersAllMap[h.value]) {
+          return;
+        }
+        this.headersAllMap[h.value] = h;
+      });
+      this.clearFilters();
+      this.headersChoosen = newHeaders
+        .filter((h) => !h.hide)
+        .map((h) => h.value);
+    },
+    _processItems(newItems) {
+      const filters = this.selectFilters;
+      newItems.map((item) => {
+        filters.map((f) => {
+          f.items.push(item[f.name]);
+        });
+      });
+      filters.map((f) => {
+        f.items = _.sortedUniq(_.sortBy(f.items));
+      });
+      const firstRow = newItems[0];
+      if (!firstRow) {
+        return;
+      }
+      Object.keys(firstRow).map((itemFieldName) => {
+        if (this.headersAllMap[itemFieldName]) {
+          return;
+        }
+        this.headersAllMap[itemFieldName] = {
+          value: itemFieldName,
+          text: itemFieldName.toUpperCase(),
+        };
+      });
     },
   },
 };

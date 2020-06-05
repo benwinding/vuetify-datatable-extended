@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+const commander = require('commander')
+const sh = require('shelljs');
+
+commander.command('demo').action(() => {
+  sh.exec('npm run build-demo');
+  sh.exec('npm run deploy-demo');
+})
+
+commander.command('lib').action(() => {
+  sh.exec('npm run build-lib');
+  sh.exec('npm publish');
+})
+
+commander.parse(process.argv);
