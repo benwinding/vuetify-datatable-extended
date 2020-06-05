@@ -43,6 +43,7 @@ export default {
         { text: "Fat (g)", value: "fat" },
         { text: "Carbs (g)", value: "carbs" },
         { text: "Protein (g)", value: "protein" },
+        { text: "Is Healthy?", value: "is_healthy", checkbox_filter: true },
         { text: "Iron (%)", value: "iron", select_filter: true },
       ],
       desserts: null,
@@ -64,6 +65,7 @@ export default {
         fat: 6.0,
         carbs: 24,
         protein: 4.0,
+        is_healthy: false,
         iron: "1%",
       });
     },
@@ -78,6 +80,7 @@ export default {
           fat: 6.0,
           carbs: 24,
           protein: 4.0,
+          is_healthy: true,
           iron: "1%",
           otherColumn: 4.0,
         },
@@ -90,6 +93,7 @@ export default {
           fat: 9.0,
           carbs: 37,
           protein: 4.3,
+          is_healthy: true,
           iron: "1%",
         },
         {
@@ -101,6 +105,7 @@ export default {
           fat: 16.0,
           carbs: 23,
           protein: 6.0,
+          is_healthy: false,
           iron: "7%",
         },
         {
@@ -112,6 +117,7 @@ export default {
           fat: 3.7,
           carbs: 67,
           protein: 4.3,
+          is_healthy: false,
           iron: "8%",
         },
         {
@@ -123,6 +129,7 @@ export default {
           fat: 16.0,
           carbs: 49,
           protein: 3.9,
+          is_healthy: false,
           iron: "16%",
         },
         {
@@ -134,6 +141,7 @@ export default {
           fat: 0.0,
           carbs: 94,
           protein: 0.0,
+          is_healthy: false,
           iron: "0%",
         },
         {
@@ -145,6 +153,7 @@ export default {
           fat: 0.2,
           carbs: 98,
           protein: 0,
+          is_healthy: false,
           iron: "2%",
         },
         {
@@ -156,6 +165,7 @@ export default {
           fat: 3.2,
           carbs: 87,
           protein: 6.5,
+          is_healthy: false,
           iron: "45%",
         },
         {
@@ -167,6 +177,7 @@ export default {
           fat: 25.0,
           carbs: 51,
           protein: 4.9,
+          is_healthy: false,
           iron: "22%",
         },
         {
@@ -178,6 +189,7 @@ export default {
           fat: 26.0,
           carbs: 65,
           protein: 7,
+          is_healthy: false,
           iron: "6%",
         },
       ];

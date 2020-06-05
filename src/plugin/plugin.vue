@@ -48,7 +48,7 @@
               </v-card-title>
               <v-divider></v-divider>
               <v-card-subtitle>
-                Active Filters
+                Active Select Filters
               </v-card-subtitle>
 
               <v-card-text>
@@ -68,6 +68,27 @@
                       :items="f.items"
                       @change="onChangedSelect()"
                     ></v-select>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+
+              <v-card-subtitle>
+                Active Switch Filters
+              </v-card-subtitle>
+
+              <v-card-text>
+                <v-list dense>
+                  <v-list-item
+                    v-for="(f, i) in checkboxFilters"
+                    :key="i"
+                    dense
+                    class="ma-0 pa-0"
+                  >
+                    <v-checkbox
+                      :label="f.label"
+                      v-model="f.model"
+                      @change="onChangedSelect()"
+                    ></v-checkbox>
                   </v-list-item>
                 </v-list>
               </v-card-text>
@@ -155,10 +176,13 @@ export default {
   props: ["items", "headers"],
   data() {
     return {
+      test: null,
       searchValue: "",
       searchValueDebounced: "",
       selectFilters: [],
-      selectFiltersMap: {},
+      selectFiltersRegistered: {},
+      checkboxFilters: [],
+      checkboxFiltersRegistered: {},
       itemsFiltered: [],
       filterHandler: new FiltersHandler(),
       showFilterMenu: false,
@@ -171,13 +195,19 @@ export default {
   },
   computed: {
     filtersEnabledCount() {
-      const enabled = this.selectFilters.filter(
-        (f) => Array.isArray(f.model) && f.model.length
+      const enabledSelect = this.selectFilters.filter(
+        (f) => !_.isEmpty(f.model)
       );
-      return enabled.length;
+      const enabledCheckbox = this.checkboxFilters.filter(
+        (f) => !!f.model
+      );
+      return enabledSelect.length || enabledCheckbox.length;
     },
     hasFilters() {
-      return !!this.selectFilters.length;
+      return !!this.allFilters.length;
+    },
+    allFilters() {
+      return this.selectFilters.concat(this.checkboxFilters);
     },
     headerChoices: function () {
       return Object.values(this.headersAllMap);
@@ -225,7 +255,7 @@ export default {
     clearFilters() {
       this.showFilterMenu = false;
       this.itemsFiltered = this.items;
-      this.selectFilters.map((f) => (f.model = null));
+      this.allFilters.map((f) => (f.model = null));
     },
     onChangedSelect() {
       this._setFiltersToHandler();
@@ -237,7 +267,8 @@ export default {
         .map((h) => h.value);
     },
     _setFiltersToHandler() {
-      this.selectFilters.map((f) => {
+      this.allFilters.map((f) => {
+        console.log('updateFilterValue: ', f.name, {...f})
         this.filterHandler.updateFilterValue(f.name, f.model);
       });
     },
@@ -251,15 +282,31 @@ export default {
         .filter((h) => h.select_filter)
         .map((h) => {
           const fieldName = h.value;
-          if (this.selectFiltersMap[fieldName]) {
+          if (this.selectFiltersRegistered[fieldName]) {
             return;
           }
-          this.selectFiltersMap[fieldName] = true;
+          this.selectFiltersRegistered[fieldName] = true;
           this.selectFilters.push({
             name: fieldName,
             model: [],
             label: "Select " + h.text,
             items: [],
+          });
+          this.filterHandler.registerFilter(fieldName);
+        });
+      newHeaders
+        .filter((h) => h.checkbox_filter)
+        .map((h) => {
+          const fieldName = h.value;
+          if (this.checkboxFiltersRegistered[fieldName]) {
+            return;
+          }
+          this.checkboxFiltersRegistered[fieldName] = true;
+          this.checkboxFilters.push({
+            name: fieldName,
+            model: false,
+            label: "Select " + h.text,
+            items: [true, false],
           });
           this.filterHandler.registerFilter(fieldName);
         });

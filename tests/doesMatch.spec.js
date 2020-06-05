@@ -4,6 +4,7 @@ const item = {
   name: "Okay",
   category: "A",
   numb: 200,
+  bool: true,
 };
 
 describe("test doesMatch", () => {
@@ -35,6 +36,16 @@ describe("test doesMatch", () => {
     const matches = doesItemMatch(item, "numb", {
       value: [200],
       options: {},
+    });
+    expect(matches).toBe(true);
+  });
+
+  test("item boolean checkbox", () => {
+    const matches = doesItemMatch(item, "bool", {
+      value: [true],
+      options: {
+        isCheckbox: true
+      },
     });
     expect(matches).toBe(true);
   });

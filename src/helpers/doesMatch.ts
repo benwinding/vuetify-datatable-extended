@@ -49,5 +49,8 @@ function parseFilterValue(
   if (typeof filterValue === "string") {
     return [filterValue];
   }
-  return filterValue;
+  if (typeof filterValue === "boolean") {
+    return [filterValue.toString()];
+  }
+  return [filterValue];
 }
