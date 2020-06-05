@@ -1,16 +1,37 @@
 #!/usr/bin/env node
 
-const commander = require('commander')
-const sh = require('shelljs');
+const commander = require("commander");
+const sh = require("shelljs");
+const run = (command) => {
+  const exitCode = sh.exec(command).code;
+  if (exitCode !== 0) {
+    throw `    
+Error: (more info probably above)
+   command: "${command}"
+ exit code: ${exitCode} (should be 0)
+` 
+  }
+}
 
-commander.command('demo').action(() => {
-  sh.exec('npm run build-demo');
-  sh.exec('npm run deploy-demo');
-})
+commander.command("demo").action(() => {
+  run("npm run build-demo");
+  run("npm run deploy-demo");
+});
 
-commander.command('lib').action(() => {
-  sh.exec('npm run build-lib');
-  sh.exec('npm publish');
-})
+commander
+  .command("lib")
+  .description('Deploys this library to npm')
+  .requiredOption(
+    "-v, --version <version>",
+    "Designate version: [<newversion> | major | minor | patch]",
+    "patch"
+  )
+  .action((options) => {
+    const version = options.version;
+    console.log('Deploying version: ' + version)
+    run("npm version " + version);
+    run("npm run build-lib");
+    run("npm publish");
+  });
 
 commander.parse(process.argv);
