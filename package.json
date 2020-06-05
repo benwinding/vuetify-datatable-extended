@@ -1,6 +1,6 @@
 {
   "name": "vuetify-datatable-extended",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": "hello@benwinding.com",
   "main": "src/plugin/index.js",
