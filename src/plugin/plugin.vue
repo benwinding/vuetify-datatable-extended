@@ -159,6 +159,7 @@ export default {
       searchValue: "",
       searchValueDebounced: "",
       selectFilters: [],
+      selectFiltersMap: {},
       itemsFiltered: [],
       filterHandler: new FiltersHandler(),
       showFilterMenu: false,
@@ -248,6 +249,10 @@ export default {
         .filter((h) => h.select_filter)
         .map((h) => {
           const fieldName = h.value;
+          if (this.selectFiltersMap[fieldName]) {
+            return
+          }
+          this.selectFiltersMap[fieldName] = true;
           this.selectFilters.push({
             name: fieldName,
             model: [],

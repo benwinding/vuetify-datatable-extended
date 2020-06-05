@@ -6,6 +6,9 @@
     />
     <v-app>
       <v-card class="pa-5">
+        <v-btn @click="addItem()">
+          Add Item
+        </v-btn>
         <v-data-table-extended
           :headers="headers"
           :items="desserts"
@@ -45,11 +48,22 @@ export default {
     };
   },
   mounted() {
-    setTimeout(()=> {
-      this.setDeserts()
-    }, 1000)
+    setTimeout(() => {
+      this.setDeserts();
+    }, 1000);
   },
   methods: {
+    addItem() {
+      this.desserts.push({
+        name: "Frozen Yogurt" + Math.random().toString(32).slice(2,5),
+        calories: 200,
+        fat: 6.0,
+        carbs: 24,
+        protein: 4.0,
+        iron: "1%",
+        otherColumn: 4.0,
+      });
+    },
     setDeserts() {
       this.desserts = [
         {
