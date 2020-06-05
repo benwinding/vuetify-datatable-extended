@@ -43,7 +43,7 @@ export default {
         { text: "Fat (g)", value: "fat" },
         { text: "Carbs (g)", value: "carbs" },
         { text: "Protein (g)", value: "protein" },
-        { text: "Is Healthy?", value: "is_healthy", checkbox_filter: true },
+        { text: "Is Healthy?", value: "is_healthy", scheckbox_filter: true },
         { text: "Iron (%)", value: "iron", select_filter: true },
       ],
       desserts: null,

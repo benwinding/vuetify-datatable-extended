@@ -72,11 +72,11 @@
                 </v-list>
               </v-card-text>
 
-              <v-card-subtitle>
+              <v-card-subtitle v-if="checkboxFilters.length">
                 Active Switch Filters
               </v-card-subtitle>
 
-              <v-card-text>
+              <v-card-text v-if="checkboxFilters.length">
                 <v-list dense>
                   <v-list-item
                     v-for="(f, i) in checkboxFilters"
