@@ -17,7 +17,7 @@
             transition="scale-transition"
           >
             <template v-slot:activator="{ on: onMenu }">
-              <v-tooltip bottom :disabled="hasFilters">
+              <v-tooltip bottom>
                 <template v-slot:activator="{ on: onTooltip }">
                   <v-badge
                     :value="filtersEnabledCount > 0"
@@ -27,25 +27,26 @@
                   >
                     <div v-on="onTooltip">
                       <v-btn
-                        :color="filtersEnabledCount > 0 ? 'primary' : null"
                         :disabled="!hasFilters"
-                        icon
                         v-on="onMenu"
+                        fab
+                        x-small
                       >
-                        <v-icon dark>mdi-filter</v-icon>
+                        <v-icon>mdi-filter</v-icon>
                       </v-btn>
                     </div>
                   </v-badge>
                 </template>
-                <span>Filters disabled</span>
+                <span v-if="hasFilters">Filter Data</span>
+                <span v-else>Filters Disabled</span>
               </v-tooltip>
             </template>
 
             <v-card>
               <v-card-title>
-                Filter
+                Filter Data
                 <v-spacer></v-spacer>
-                <v-btn dark @click="clearFilters()">
+                <v-btn small dark @click="clearFilters()">
                   <v-icon left>mdi-close</v-icon>
                   Clear Filters
                 </v-btn>
@@ -78,30 +79,26 @@
             offset-x
             transition="scale-transition"
           >
-            <template v-slot:activator="{ on }">
-              <v-badge
-                :value="filtersEnabledCount > 0"
-                color="accent"
-                :content="filtersEnabledCount"
-                overlap
-              >
-                <v-btn
-                  :color="filtersEnabledCount > 0 ? 'primary' : null"
-                  icon
-                  v-on="on"
-                >
-                  <v-icon dark>mdi-view-column</v-icon>
-                </v-btn>
-              </v-badge>
+            <template v-slot:activator="{ on: onMenu }">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on: onTooltip }">
+                  <div v-on="onTooltip">
+                    <v-btn v-on="onMenu" fab x-small>
+                      <v-icon>mdi-view-column</v-icon>
+                    </v-btn>
+                  </div>
+                </template>
+                <span>Choose Columns</span>
+              </v-tooltip>
             </template>
 
             <v-card>
               <v-card-title>
                 Choose Columns
                 <v-spacer></v-spacer>
-                <v-btn dark @click="resetColumns()">
+                <v-btn dark @click="resetColumns()" small>
                   <v-icon left>mdi-close</v-icon>
-                  Reset
+                  Reset Columns
                 </v-btn>
               </v-card-title>
               <v-divider></v-divider>
@@ -253,7 +250,7 @@ export default {
         .map((h) => {
           const fieldName = h.value;
           if (this.selectFiltersMap[fieldName]) {
-            return
+            return;
           }
           this.selectFiltersMap[fieldName] = true;
           this.selectFilters.push({
@@ -274,7 +271,8 @@ export default {
       const filters = this.selectFilters;
       newItems.map((item) => {
         filters.map((f) => {
-          f.items.push(item[f.name]);
+          const fieldValue = _.get(item, f.name);
+          f.items.push(fieldValue);
         });
       });
       filters.map((f) => {

@@ -39,6 +39,7 @@ export default {
           value: "name",
         },
         { text: "Calories", value: "calories", select_filter: true },
+        { text: "Type", value: "obj.val", select_filter: true },
         { text: "Fat (g)", value: "fat" },
         { text: "Carbs (g)", value: "carbs" },
         { text: "Protein (g)", value: "protein" },
@@ -55,19 +56,24 @@ export default {
   methods: {
     addItem() {
       this.desserts.push({
-        name: "Frozen Yogurt" + Math.random().toString(32).slice(2,5),
+        name: "Frozen Yogurt" + Math.random().toString(32).slice(2, 5),
+        obj: {
+          val: 'Orange'
+        },
         calories: 200,
         fat: 6.0,
         carbs: 24,
         protein: 4.0,
         iron: "1%",
-        otherColumn: 4.0,
       });
     },
     setDeserts() {
       this.desserts = [
         {
           name: "Frozen Yogurt",
+          obj: {
+            val: 'Banana'
+          },
           calories: 200,
           fat: 6.0,
           carbs: 24,
@@ -77,6 +83,9 @@ export default {
         },
         {
           name: "Ice cream sandwich",
+          obj: {
+            val: 'Apple'
+          },
           calories: 200,
           fat: 9.0,
           carbs: 37,
@@ -85,6 +94,9 @@ export default {
         },
         {
           name: "Eclair",
+          obj: {
+            val: 'Apple'
+          },
           calories: 300,
           fat: 16.0,
           carbs: 23,
@@ -93,6 +105,9 @@ export default {
         },
         {
           name: "Cupcake",
+          obj: {
+            val: 'Apple'
+          },
           calories: 300,
           fat: 3.7,
           carbs: 67,
@@ -101,6 +116,9 @@ export default {
         },
         {
           name: "Gingerbread",
+          obj: {
+            val: 'Apple'
+          },
           calories: 400,
           fat: 16.0,
           carbs: 49,
@@ -109,6 +127,9 @@ export default {
         },
         {
           name: "Jelly bean",
+          obj: {
+            val: 'Apple'
+          },
           calories: 400,
           fat: 0.0,
           carbs: 94,
@@ -117,6 +138,9 @@ export default {
         },
         {
           name: "Lollipop",
+          obj: {
+            val: 'Apple'
+          },
           calories: 400,
           fat: 0.2,
           carbs: 98,
@@ -125,6 +149,9 @@ export default {
         },
         {
           name: "Honeycomb",
+          obj: {
+            val: 'Apple'
+          },
           calories: 400,
           fat: 3.2,
           carbs: 87,
@@ -133,6 +160,9 @@ export default {
         },
         {
           name: "Donut",
+          obj: {
+            val: 'Apple'
+          },
           calories: 500,
           fat: 25.0,
           carbs: 51,
@@ -141,6 +171,9 @@ export default {
         },
         {
           name: "KitKat",
+          obj: {
+            val: 'Apple'
+          },
           calories: 500,
           fat: 26.0,
           carbs: 65,
