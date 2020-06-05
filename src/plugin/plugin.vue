@@ -26,12 +26,7 @@
                     overlap
                   >
                     <div v-on="onTooltip">
-                      <v-btn
-                        :disabled="!hasFilters"
-                        v-on="onMenu"
-                        fab
-                        x-small
-                      >
+                      <v-btn :disabled="!hasFilters" v-on="onMenu" fab x-small>
                         <v-icon>mdi-filter</v-icon>
                       </v-btn>
                     </div>
@@ -52,22 +47,29 @@
                 </v-btn>
               </v-card-title>
               <v-divider></v-divider>
+              <v-card-subtitle>
+                Active Filters
+              </v-card-subtitle>
 
               <v-card-text>
-                <!-- Categorie -->
-                <v-list-item-title>Select Filters</v-list-item-title>
-                <v-list-item-content v-for="f of selectFilters" :key="f.name">
-                  <v-list-item-action class="pa-0 ma-0">
+                <v-list dense>
+                  <v-list-item
+                    v-for="(f, i) in selectFilters"
+                    :key="i"
+                    dense
+                    class="ma-0 pa-0"
+                  >
                     <v-select
                       :label="f.label"
                       multiple
                       chips
+                      dense
                       v-model="f.model"
                       :items="f.items"
                       @change="onChangedSelect()"
                     ></v-select>
-                  </v-list-item-action>
-                </v-list-item-content>
+                  </v-list-item>
+                </v-list>
               </v-card-text>
             </v-card>
           </v-menu>
