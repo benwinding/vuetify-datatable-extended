@@ -19,66 +19,45 @@ describe("test filter", () => {
 
   test("test filter category not present", () => {
     const f = new FilterArraysHandler();
-    f.registerFilter(
-      "category",
-      (filterFieldName, filterFieldValueArray, item) => {
-        if (
-          filterFieldValueArray.some((v) => item[filterFieldName].includes(v))
-        ) {
-          return true;
-        }
-        return false;
-      }
-    );
+    f.registerFilter("category", { caseSensitive: true });
     f.updateFilterValue("category", ["A"]);
     expect(f.runFilter(item)).toBe(true);
   });
 
   test("test filter category is present", () => {
     const f = new FilterArraysHandler();
-    f.registerFilter(
-      "category",
-      (filterFieldName, filterFieldValueArray, item) => {
-        if (
-          filterFieldValueArray.some((v) => item[filterFieldName].includes(v))
-        ) {
-          return true;
-        }
-        return false;
-      }
-    );
+    f.registerFilter("category", { caseSensitive: true });
     f.updateFilterValue("category", ["B"]);
     expect(f.runFilter(item)).toBe(false);
   });
 
   test("test filter category multiple filters selected", () => {
     const f = new FilterArraysHandler();
-    f.registerFilter("category", (name, filterValue, item) => {
-      if (filterValue.some((v) => item[name].includes(v))) {
-        return true;
-      }
-      return false;
-    });
+    f.registerFilter("category", { caseSensitive: true });
     f.updateFilterValue("category", ["B"]);
     expect(f.runFilter(item)).toBe(false);
   });
 
   test("test filter category multiple filters", () => {
     const f = new FilterArraysHandler();
-    f.registerFilter("category", (name, filterValue, item) => {
-      if (filterValue.some((v) => item[name].includes(v))) {
-        return true;
-      }
-      return false;
-    });
-    f.updateFilterValue("category", ["B"], true);
+    f.registerFilter("category", { caseSensitive: true });
+    f.updateFilterValue("category", ["B"]);
 
-    f.registerFilter("name", (name, filterValue, item) => {
-      if (filterValue.some((v) => item[name].includes(v))) {
-        return true;
-      }
-      return false;
-    });
+    f.registerFilter("name", { caseSensitive: true });
     expect(f.runFilter(item)).toBe(false);
+  });
+
+  test("test filter sets active filters empty array", () => {
+    const f = new FilterArraysHandler();
+    f.registerFilter("category", { caseSensitive: true });
+    f.updateFilterValue("category", []);
+    expect(f.activeFilters.category).toBe(false);
+  });
+
+  test("test filter sets active filters empty array with null", () => {
+    const f = new FilterArraysHandler();
+    f.registerFilter("category", { caseSensitive: true });
+    f.updateFilterValue("category", [null]);
+    expect(f.activeFilters.category).toBe(false);
   });
 });

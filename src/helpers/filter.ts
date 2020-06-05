@@ -24,9 +24,7 @@ class FilterArraysHandler {
       this.filters[filterFieldName] = {};
     }
     this.filters[filterFieldName].value = filterValue;
-    const hasValue =
-      !_.isNil(filterValue) ||
-      (Array.isArray(filterValue) && !EmptyArray(filterValue));
+    const hasValue = IsValidValueOrArray(filterValue);
     this.activeFilters[filterFieldName] = hasValue;
     console.log({ activeFilters: this.activeFilters });
   }
@@ -55,12 +53,15 @@ class FilterArraysHandler {
   }
 }
 
-export function EmptyArray(arr: any[]): boolean {
-  if (!Array.isArray(arr)) {
+export function IsValidValueOrArray(input: any | any[]): boolean {
+  if (_.isNil(input)) {
+    return false;
+  }
+  if (!_.isArray(input)) {
     return true;
   }
-  const allValuesNil = arr.every((v) => _.isNil(v));
-  if (allValuesNil) {
+  const someValues = input.some((v) => !_.isNil(v));
+  if (someValues) {
     return true;
   }
   return false;
