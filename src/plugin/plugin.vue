@@ -229,7 +229,9 @@ export default {
       this._filterItems();
     },
     resetColumns() {
-      this.headersChoosen = this.headers.map((h) => h.value);
+      this.headersChoosen = this.headers
+        .filter((h) => !h.hide)
+        .map((h) => h.value);
     },
     _setFiltersToHandler() {
       this.selectFilters.map((f) => {
@@ -255,15 +257,10 @@ export default {
           this.filterHandler.registerFilter(fieldName);
         });
       newHeaders.map((h) => {
-        if (this.headersAllMap[h.value]) {
-          return;
-        }
-        this.headersAllMap[h.value] = h;
+        this._setHeaderMap(h.value, h);
       });
       this.clearFilters();
-      this.headersChoosen = newHeaders
-        .filter((h) => !h.hide)
-        .map((h) => h.value);
+      this.resetColumns();
     },
     _processItems(newItems) {
       const filters = this.selectFilters;
@@ -280,14 +277,18 @@ export default {
         return;
       }
       Object.keys(firstRow).map((itemFieldName) => {
-        if (this.headersAllMap[itemFieldName]) {
-          return;
-        }
-        this.headersAllMap[itemFieldName] = {
+        this._setHeaderMap(itemFieldName, {
           value: itemFieldName,
           text: itemFieldName.toUpperCase(),
-        };
+        });
       });
+    },
+    _setHeaderMap(fieldName, headerObj) {
+      if (this.headersAllMap[fieldName]) {
+        return;
+      }
+      this.headersAllMap[fieldName] = headerObj;
+      this.headersAllMap = { ...this.headersAllMap };
     },
   },
 };
