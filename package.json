@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "start": "tsc && vue serve ./src/main.js",
+    "test": "tsc && jest",
     "build-lib": "tsc",
     "build-demo": "tsc && vue build ./src/main.js",
     "deploy-demo": "gh-pages -d dist"

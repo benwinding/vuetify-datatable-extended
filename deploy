@@ -29,8 +29,9 @@ commander
   .action((options) => {
     const version = options.version;
     console.log('Deploying version: ' + version)
-    run("npm version " + version);
+    run("npm run test");
     run("npm run build-lib");
+    run("npm version " + version);
     run("npm publish");
   });
 
