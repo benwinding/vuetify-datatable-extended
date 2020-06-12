@@ -26,14 +26,17 @@
                     overlap
                   >
                     <div v-on="onTooltip">
-                      <v-btn :disabled="!hasFilters" v-on="onMenu" fab x-small>
+                      <v-btn :disabled="!hasFilters || loading" v-on="onMenu" fab x-small>
                         <v-icon>mdi-filter</v-icon>
                       </v-btn>
                     </div>
                   </v-badge>
                 </template>
-                <span v-if="hasFilters">Filter Data</span>
-                <span v-else>Filters Disabled</span>
+                <span v-if="loading">Loading</span>
+                <div v-else>
+                  <span v-if="hasFilters">Filter Data</span>
+                  <span v-if="!hasFilters">Filters Disabled</span>
+                </div>
               </v-tooltip>
             </template>
 
@@ -47,8 +50,11 @@
                 </v-btn>
               </v-card-title>
               <v-divider></v-divider>
-              <v-card-subtitle>
+              <v-card-subtitle v-if="hasFilters">
                 Active Select Filters
+              </v-card-subtitle>
+              <v-card-subtitle v-if="!hasFilters">
+                No filters enabled
               </v-card-subtitle>
 
               <v-card-text>
@@ -148,6 +154,7 @@
     <v-data-table
       v-bind="$attrs"
       v-on="$listeners"
+      :loading="loading"
       :items="itemsFiltered || []"
       :headers="headersChoosenObjs || []"
       :search="searchValueDebounced"
@@ -173,7 +180,7 @@ import { takeUntil, filter } from "rxjs/operators";
 import * as _ from "lodash";
 
 export default {
-  props: ["items", "headers"],
+  props: ["items", "headers", "loading"],
   data() {
     return {
       test: null,
