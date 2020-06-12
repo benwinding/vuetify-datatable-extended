@@ -2,15 +2,17 @@
 
 const commander = require("commander");
 const sh = require("shelljs");
-const run = (command) => {
-  const exitCode = sh.exec(command).code;
+const run = (command, errorMessage="Error") => {
+  const result = sh.exec(command);
+  const exitCode = result.code;
   if (exitCode !== 0) {
     throw `    
-Error: (more info probably above)
+     Error: ${errorMessage} (more info probably above)
    command: "${command}"
  exit code: ${exitCode} (should be 0)
 ` 
   }
+  return result;
 }
 
 commander.command("demo").action(() => {
@@ -29,10 +31,14 @@ commander
   .action((options) => {
     const version = options.version;
     console.log('Deploying version: ' + version)
+    run("git diff --exit-code", "You need to commit changes in git first");
     run("npm run test");
     run("npm run build-lib");
-    run("npm version " + version);
+    const npmVersion = run("npm version " + version);
+    run(`git commit -am "New publish: ${npmVersion} (${npmVersion})"`);
     run("npm publish");
+    run(`git push origin ${npmVersion}`);
+    run('git push');
   });
 
 commander.parse(process.argv);
