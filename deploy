@@ -35,7 +35,6 @@ commander
     run("npm run test");
     run("npm run build-lib");
     const npmVersion = run("npm version " + version);
-    run(`git commit -am "New publish: ${npmVersion} (${npmVersion})"`);
     run("npm publish");
     run(`git push origin ${npmVersion}`);
     run('git push');
