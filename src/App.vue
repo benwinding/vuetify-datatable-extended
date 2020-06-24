@@ -5,6 +5,7 @@
       rel="stylesheet"
     />
     <v-app>
+      <GithubCorner />
       <v-card class="pa-5">
         <v-btn @click="addItem()">
           Add Item
@@ -27,7 +28,12 @@
 </template>
 
 <script>
+import GithubCorner from './github-corner.vue';
+
 export default {
+  components: {
+    GithubCorner
+  },
   data() {
     return {
       headers: [
