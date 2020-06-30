@@ -4,6 +4,7 @@ import { doesItemMatch } from "./doesMatch";
 export interface FilterOptions {
   caseSensitive?: boolean;
   isCheckbox?: boolean;
+  isManyFilter?: boolean;
 }
 
 export interface Filter {
@@ -26,7 +27,6 @@ class FilterArraysHandler {
     this.filters[filterFieldName].value = filterValue;
     const hasValue = IsValidValueOrArray(filterValue);
     this.activeFilters[filterFieldName] = hasValue;
-    console.log({ activeFilters: this.activeFilters });
   }
 
   registerFilter(filterFieldName: string, options: FilterOptions) {

@@ -50,3 +50,43 @@ describe("test doesMatch", () => {
     expect(matches).toBe(true);
   });
 });
+
+const itemMany = {
+  name: "Okay",
+  category: "A",
+  numb: 200,
+  bool: true,
+  tags: ['one', 'two', 'three'],
+};
+
+describe('test many', () => {
+  test("item tags", () => {
+    const matches = doesItemMatch(itemMany, "tags", {
+      value: ['two'],
+      options: {
+        isManyFilter: true
+      },
+    });
+    expect(matches).toBe(true);
+  });
+
+  test("item tags should fail", () => {
+    const matches = doesItemMatch(itemMany, "tags", {
+      value: ['3333'],
+      options: {
+        isManyFilter: true
+      },
+    });
+    expect(matches).toBe(false);
+  });
+
+  test("item tags should fail", () => {
+    const matches = doesItemMatch(itemMany, "tags", {
+      value: ['3333', 'one'],
+      options: {
+        isManyFilter: true
+      },
+    });
+    expect(matches).toBe(true);
+  });
+})

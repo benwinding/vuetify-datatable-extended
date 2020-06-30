@@ -21,6 +21,9 @@
           <template v-slot:item.calories="{ item }">
             <v-chip>{{ item.calories }}</v-chip>
           </template>
+          <template v-slot:item.tags="{ item }">
+            <v-chip v-for="(tag, i) of item.tags" :key="i">{{ tag }}</v-chip>
+          </template>
         </v-data-table-extended>
       </v-card>
     </v-app>
@@ -49,8 +52,9 @@ export default {
         { text: "Fat (g)", value: "fat" },
         { text: "Carbs (g)", value: "carbs" },
         { text: "Protein (g)", value: "protein" },
-        { text: "Is Healthy?", value: "is_healthy", scheckbox_filter: true },
+        { text: "Is Healthy?", value: "is_healthy", checkbox_filter: true },
         { text: "Iron (%)", value: "iron", select_filter: true },
+        { text: "Tags", value: "tags", select_filter_many: true },
       ],
       desserts: null,
     };
@@ -73,6 +77,7 @@ export default {
         protein: 4.0,
         is_healthy: false,
         iron: "1%",
+        tags: ['cheap', 'tasty']
       });
     },
     setDeserts() {
@@ -89,6 +94,7 @@ export default {
           is_healthy: true,
           iron: "1%",
           otherColumn: 4.0,
+          tags: ['cheap', 'healthy']
         },
         {
           name: "Ice cream sandwich",
@@ -101,6 +107,7 @@ export default {
           protein: 4.3,
           is_healthy: true,
           iron: "1%",
+          tags: ['healthy']
         },
         {
           name: "Eclair",
@@ -111,8 +118,9 @@ export default {
           fat: 16.0,
           carbs: 23,
           protein: 6.0,
-          is_healthy: false,
+          is_healthy: true,
           iron: "7%",
+          tags: ['junk-food', 'cheap']
         },
         {
           name: "Cupcake",
@@ -123,8 +131,9 @@ export default {
           fat: 3.7,
           carbs: 67,
           protein: 4.3,
-          is_healthy: false,
+          is_healthy: true,
           iron: "8%",
+          tags: ['junk-food', 'cheap']
         },
         {
           name: "Gingerbread",
@@ -137,6 +146,7 @@ export default {
           protein: 3.9,
           is_healthy: false,
           iron: "16%",
+          tags: ['not-bad']
         },
         {
           name: "Jelly bean",
@@ -149,6 +159,7 @@ export default {
           protein: 0.0,
           is_healthy: false,
           iron: "0%",
+          tags: ['junk-food']
         },
         {
           name: "Lollipop",
@@ -161,6 +172,7 @@ export default {
           protein: 0,
           is_healthy: false,
           iron: "2%",
+          tags: ['junk-food', 'cheap', 'tasty']
         },
         {
           name: "Honeycomb",

@@ -7,8 +7,24 @@ export function doesItemMatch(
   filter: Filter
 ): boolean {
   const optionsParsed: FilterOptions = (filter && filter.options) || {};
-  const filterValue: any = filter && filter.value;
   const itemValue = _.get(item, filterFieldName);
+  const filterValue: any = filter && filter.value;
+  if (optionsParsed.isManyFilter) {
+    return doesManyMatch(itemValue, filterValue)
+  }
+  return doesStringMatch(itemValue, filterValue, optionsParsed);
+}
+
+function doesManyMatch(itemValue: [], filterValue: any): boolean {
+  const parsedValue = Array.isArray(itemValue) ? itemValue : [];
+  const parsedFilterValue: string[] = Array.isArray(filterValue) ? filterValue : [];
+  const parsedFilterValueKeys = new Set(parsedFilterValue);
+  let matches: boolean[] = parsedValue.map((str) => parsedFilterValueKeys.has(str));
+  const doesMatch = matches.reduce((acc, match) => acc || match, false);
+  return doesMatch;
+}
+
+function doesStringMatch(itemValue: any, filterValue: any, optionsParsed: FilterOptions): boolean {
   const parsedItemValueInput = parseItemValue(itemValue);
   const parsedFilterInput = parseFilterValue(filterValue);
   let parsedItemValue = parsedItemValueInput;
