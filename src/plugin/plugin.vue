@@ -203,6 +203,27 @@
   </div>
 </template>
 
+<style scoped>
+.align-center {
+  align-items: center;
+}
+.d-flex {
+  display: flex;
+}
+.flex-row {
+  flex-direction: row;
+}
+.justify-space-between {
+  justify-content: space-between;
+}
+.ma-0 {
+  margin: 0;
+}
+.pa-0 {
+  padding: 0;
+}
+</style>
+
 <script>
 import FiltersHandler from "../helpers/filter";
 import { debounce } from "./debounce";
