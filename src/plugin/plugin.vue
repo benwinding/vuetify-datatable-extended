@@ -5,6 +5,8 @@
       <vde-header 
         :hasCsvExport="hasCsvExport"
         :selectManyFilters="selectManyFilters"
+        :selectFilters="selectFilters"
+        :checkboxFilters="checkboxFilters"
         :filtersEnabledCount="filtersEnabledCount"
         :hasFilters="hasFilters"
         :loading="loading"
