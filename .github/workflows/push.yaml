@@ -1,0 +1,60 @@
+on: push
+name: Build and Publish
+jobs:
+  build-lib:
+    name: Deploy Lib
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js 10.17
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.17
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+    - name: Install Dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm install
+    - name: Build Library
+      run: npm run-script build-lib
+    - name: Publish
+      if: github.ref == 'refs/heads/master'
+      uses: mikeal/merge-release@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  build-demo:
+    name: Deploy Demo
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Use Node.js 10.17
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.17
+    - name: Cache node_modules
+      id: cache-modules
+      uses: actions/cache@v1
+      with:
+        path: node_modules
+        key: ${{ runner.OS }}-build-${{ hashFiles('package.json') }}
+    - name: Install Dependencies
+      if: steps.cache-modules.outputs.cache-hit != 'true'
+      run: npm install
+    - name: Build & Deploy Demo
+      run: |
+        npm run-script build-demo
+    - name: Make 404.html
+      run: cp index.html 404.html
+      working-directory: dist
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: dist # The folder the action should deploy.
