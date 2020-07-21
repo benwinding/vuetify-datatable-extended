@@ -11,6 +11,7 @@
           Add Item
         </v-btn>
         <v-data-table-extended
+          csv-filename="EasyMoney"
           :headers="headers"
           :items="desserts"
           :sort-by="['calories', 'fat']"

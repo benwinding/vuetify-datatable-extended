@@ -3,12 +3,14 @@
     <v-container fluid>
       <!-- SEARCH BAR -->
       <vde-header 
+        :hasCsvExport="hasCsvExport"
         :selectManyFilters="selectManyFilters"
         :filtersEnabledCount="filtersEnabledCount"
         :hasFilters="hasFilters"
         :loading="loading"
         :headerChoices="headerChoices"
         :headersChoosen="headersChoosen"
+        @onClickExport="onClickExport"
         @clearFilters="clearFilters"
         @onChangedFilters="onChangedFilters"
         @resetColumns="resetColumns"
@@ -41,6 +43,7 @@
 <script>
 import VdeHeader from "./header";
 import FiltersHandler from "../helpers/filter";
+import { downloadAsJson } from "../helpers/json-to-csv";
 import { debounce } from "./debounce";
 import { Subject, BehaviorSubject, combineLatest } from "rxjs";
 import { takeUntil, filter } from "rxjs/operators";
@@ -50,7 +53,7 @@ export default {
   components: {
     VdeHeader
   },
-  props: ["items", "headers", "loading"],
+  props: ["items", "headers", "loading", 'csvFilename'],
   data() {
     return {
       test: null,
@@ -73,6 +76,10 @@ export default {
     };
   },
   computed: {
+    hasCsvExport() {
+      const has = this.csvFilename;
+      return !!has;
+    },
     filtersEnabledCount() {
       const enabledSelect = this.selectFilters.filter(
         (f) => !_.isEmpty(f.model)
@@ -100,6 +107,7 @@ export default {
     },
   },
   mounted() {
+    // console.log({$attrs: this.$attrs, this: this})
     combineLatest([this.o$items, this.o$headers])
       .pipe(
         filter(
@@ -133,6 +141,12 @@ export default {
     },
   },
   methods: {
+    onClickExport() {
+      const filtered = this.itemsFiltered
+      const headerValues = this.headersChoosen;
+      const filenamePrefix = this.csvFilename || 'exported';
+      downloadAsJson(filtered, headerValues, filenamePrefix)
+    },
     searchValueChanged(e) {
       this.searchValue = e;
     },

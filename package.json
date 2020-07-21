@@ -23,11 +23,14 @@
     "vuetify": "2.x"
   },
   "dependencies": {
+    "json2csv": "^5.x",
     "lodash": "^4.x",
+    "moment": "^2.x",
     "rxjs": "^6.x"
   },
   "devDependencies": {
     "@babel/plugin-transform-modules-commonjs": "^7.10.1",
+    "@types/json2csv": "^5.0.1",
     "@types/lodash": "^4.14.155",
     "@vue/cli": "^4.4.1",
     "commander": "^5.1.0",

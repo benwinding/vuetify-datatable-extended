@@ -131,7 +131,17 @@
         </v-menu>
       </div>
 
-      <div>
+      <div class="d-flex flex-row">
+        <v-tooltip v-if="hasCsvExport" bottom>
+          <template v-slot:activator="{ on: onTooltip }">
+            <div v-on="onTooltip" class="mr-1">
+              <v-btn @click="onClickExport()" fab x-small>
+                <v-icon>mdi-file-download</v-icon>
+              </v-btn>
+            </div>
+          </template>
+          <span>Download as CSV file</span>
+        </v-tooltip>
         <v-menu
           :close-on-content-click="false"
           offset-x
@@ -202,11 +212,15 @@
 .pa-0 {
   padding: 0;
 }
+.mr-1 {
+  margin-right: 1em;
+}
 </style>
 
 <script>
 export default {
   props: [
+    'hasCsvExport',
     'headersChoosen',
     'headerChoices',
     'selectManyFilters',
@@ -242,6 +256,9 @@ export default {
     },
     headersChoosenChanged(e) {
       this.$emit('headersChoosenChanged', e)
+    },
+    onClickExport() {
+      this.$emit('onClickExport')
     }
   },
   filters: {
